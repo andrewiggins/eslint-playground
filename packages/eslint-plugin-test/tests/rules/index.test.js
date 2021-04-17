@@ -13,10 +13,29 @@ tester.run("testRule", testRule, {
           return <Dialog title={{ src: "", alt: "" }} />;
         }`,
     },
+    {
+      code: `
+        import React from "react";
+        import { Dialog as DialogLocal } from "library" ;
+
+        export function Test(): JSX.Element {
+          return <DialogLocal title={{ src: "", alt: "" }} />;
+        }`,
+    },
   ],
   invalid: [
     {
-      code: "function f() {}",
+      code: 'import library from "library";',
+      errors: [{ messageId: "noReturnType" }],
+      // output: "let a = 0;",
+    },
+    {
+      code: 'import * as library from "library";',
+      errors: [{ messageId: "noReturnType" }],
+      // output: "let a = 0;",
+    },
+    {
+      code: 'import * as library, { Dialog } from "library";',
       errors: [{ messageId: "noReturnType" }],
       // output: "let a = 0;",
     },

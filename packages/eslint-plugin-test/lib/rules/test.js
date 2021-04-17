@@ -3,7 +3,13 @@
 // TODO: Look at the utilities in eslint-utils: https://eslint-utils.mysticatea.dev/
 // Re-exported in @typescript/experimental-utilities as ASTUtils
 
-/** @type {import('@typescript-eslint/experimental-utils').TSESLint.RuleModule} */
+import { ASTUtils } from "@typescript-eslint/experimental-utils";
+const { ReferenceTracker } = ASTUtils;
+
+/**
+ * @typedef {"noReturnType" | "disallowed"} MessageIds
+ * @type {import('@typescript-eslint/experimental-utils').TSESLint.RuleModule<MessageIds, []>}
+ */
 const testRule = {
   meta: {
     type: "suggestion",
@@ -11,14 +17,14 @@ const testRule = {
     docs: {
       description: "test eslint rule",
       category: "Possible Errors",
-      recommended: true,
+      recommended: "error",
       url: "",
     },
     messages: {
       noReturnType: "Function has no return type.",
+      disallowed: "disallow {{name}}.",
     },
-    // rule options schema
-    // schema: []
+    schema: [], // rule options schema
   },
   create(context) {
     // Interesting scope & variable management:
@@ -39,8 +45,12 @@ const testRule = {
     // How to get TS stuff:
     // const tsService = context.parserServices;
 
+    /** @param {import("@typescript-eslint/experimental-utils").TSESTree.JSXTagNameExpression} node */
     function getTSInfo(node) {
-      if (context.parserServices.hasFullTypeInformation) {
+      if (
+        context.parserServices &&
+        context.parserServices.hasFullTypeInformation
+      ) {
         const esTreeNodeToTSNodeMap =
           context.parserServices.esTreeNodeToTSNodeMap;
         const program = context.parserServices.program;
@@ -64,6 +74,35 @@ const testRule = {
     return {
       JSXOpeningElement(node) {
         console.log(getTSInfo(node.name));
+      },
+      "Program:exit"() {
+        const tracker = new ReferenceTracker(context.getScope(), {
+          globalObjectNames: [],
+          mode: "legacy",
+        });
+
+        const traceMap = {
+          // Find `Dialog` of `library` module.
+          library: {
+            // @ts-ignore Out-of-date types
+            [ReferenceTracker.ESM]: true,
+            Dialog: {
+              [ReferenceTracker.READ]: true,
+              title: {
+                [ReferenceTracker.READ]: true,
+              },
+            },
+          },
+        };
+
+        // @ts-ignore Out-of-date types
+        for (const { node, path } of tracker.iterateEsmReferences(traceMap)) {
+          context.report({
+            node,
+            messageId: "disallowed",
+            data: { name: path.join(".") },
+          });
+        }
       },
       FunctionDeclaration(node) {
         if (node.returnType == null) {
