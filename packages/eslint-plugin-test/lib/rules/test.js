@@ -1,4 +1,6 @@
-/** @type {import('eslint').Rule.RuleModule} */
+// Type annotation for eslint plugin: /** @type {import('eslint').Rule.RuleModule} */
+
+/** @type {import('@typescript-eslint/experimental-utils').TSESLint.RuleModule} */
 const testRule = {
   meta: {
     type: "suggestion",
