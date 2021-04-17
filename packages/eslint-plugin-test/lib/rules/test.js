@@ -73,7 +73,8 @@ const testRule = {
 
     return {
       JSXOpeningElement(node) {
-        console.log(getTSInfo(node.name));
+        const tsInfo = getTSInfo(node.name);
+        // console.log(tsInfo);
       },
       "Program:exit"() {
         const tracker = new ReferenceTracker(context.getScope(), {
@@ -97,11 +98,12 @@ const testRule = {
 
         // @ts-ignore Out-of-date types
         for (const { node, path } of tracker.iterateEsmReferences(traceMap)) {
-          context.report({
-            node,
-            messageId: "disallowed",
-            data: { name: path.join(".") },
-          });
+          // console.log(path.join("."));
+          // context.report({
+          //   node,
+          //   messageId: "disallowed",
+          //   data: { name: path.join(".") },
+          // });
         }
       },
       FunctionDeclaration(node) {

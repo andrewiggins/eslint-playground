@@ -2,7 +2,7 @@ import { AST_NODE_TYPES as NODE } from "@typescript-eslint/types";
 import { libraryName } from "./utils.js";
 
 /**
- * @typedef {"noNamespaceImports"} MessageIds
+ * @typedef {"noNamespaceImports" | "noDefaultImports"} MessageIds
  * @type {import('@typescript-eslint/experimental-utils').TSESLint.RuleModule<MessageIds, []>}
  */
 const noNamespaceImport = {
@@ -16,6 +16,7 @@ const noNamespaceImport = {
     },
     messages: {
       noNamespaceImports: `Do not import "${libraryName}" as a namespace. Use named imports instead`,
+      noDefaultImports: `Do not import a default value from "${libraryName}". Use named imports instead`,
     },
     schema: [],
   },
@@ -23,15 +24,12 @@ const noNamespaceImport = {
     return {
       ImportDeclaration(node) {
         if (node.source.value == libraryName) {
-          const containsNamespaceImport = node.specifiers.some(
-            (specifier) => specifier.type == NODE.ImportNamespaceSpecifier
-          );
-
-          if (containsNamespaceImport) {
-            context.report({
-              node,
-              messageId: "noNamespaceImports",
-            });
+          for (let specifier of node.specifiers) {
+            if (specifier.type == NODE.ImportDefaultSpecifier) {
+              context.report({ node, messageId: "noDefaultImports" });
+            } else if (specifier.type == NODE.ImportNamespaceSpecifier) {
+              context.report({ node, messageId: "noNamespaceImports" });
+            }
           }
         }
       },
