@@ -1,0 +1,25 @@
+{
+  "name": "eslint-plugin-test",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "test",
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "eslint-plugin"
+  ],
+  "author": "Andre Wiggins",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "mocha --experimental-import-meta-resolve tests/**/*.test.js"
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.3",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "eslint": "^7.24.0",
+    "eslint-plugin-react": "^7.23.2",
+    "mocha": "^8.3.2"
+  },
+  "license": "MIT"
+}
