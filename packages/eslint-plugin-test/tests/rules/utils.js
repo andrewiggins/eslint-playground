@@ -9,13 +9,30 @@ globalThis.afterAll = after;
 globalThis.beforeAll = before;
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+/** @type {(...args: string[]) => string} */
 export const pkgRoot = (...args) => join(__dirname, "..", "..", ...args);
 
 // ESLint RuleTester class requires absolute paths to custom parsers
 // const parserUrl = await import.meta.resolve("@typescript-eslint/parser");
 
-/** @type {import("@typescript-eslint/experimental-utils").TSESLint.RuleTesterConfig} */
+/** @typedef {import("@typescript-eslint/experimental-utils").TSESLint.RuleTesterConfig & { parser: "@typescript-eslint/parser"}} RuleTesterConfig */
+
+/** @type {RuleTesterConfig} */
 const testConfig = {
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    // ESTree parser options from eslint --init
+    ecmaFeatures: {
+      jsx: true,
+    },
+    ecmaVersion: 2020,
+    sourceType: "module",
+  },
+};
+
+/** @type {RuleTesterConfig} */
+const typedTestConfig = {
   // env: {
   //   browser: true,
   //   es2021: true,
@@ -37,3 +54,4 @@ const testConfig = {
 };
 
 export const createRuleTester = () => new RuleTester(testConfig);
+export const createTypedRuleTester = () => new RuleTester(typedTestConfig);

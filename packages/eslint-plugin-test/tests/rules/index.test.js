@@ -1,7 +1,7 @@
+import { createTypedRuleTester } from "./utils.js";
 import testRule from "../../lib/rules/test.js";
-import { createRuleTester } from "./utils.js";
 
-const tester = createRuleTester();
+const tester = createTypedRuleTester();
 tester.run("testRule", testRule, {
   valid: [
     {
@@ -25,17 +25,7 @@ tester.run("testRule", testRule, {
   ],
   invalid: [
     {
-      code: 'import library from "library";',
-      errors: [{ messageId: "noReturnType" }],
-      // output: "let a = 0;",
-    },
-    {
-      code: 'import * as library from "library";',
-      errors: [{ messageId: "noReturnType" }],
-      // output: "let a = 0;",
-    },
-    {
-      code: 'import * as library, { Dialog } from "library";',
+      code: "function f() {}",
       errors: [{ messageId: "noReturnType" }],
       // output: "let a = 0;",
     },
