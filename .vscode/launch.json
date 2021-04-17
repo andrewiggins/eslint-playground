@@ -9,8 +9,10 @@
       "request": "launch",
       "name": "Run tests",
       "skipFiles": ["<node_internals>/**"],
+      "cwd": "${workspaceFolder}/packages/eslint-plugin-test",
       "runtimeArgs": ["--experimental-import-meta-resolve"],
-      "program": "${workspaceFolder}\\packages\\eslint-plugin-test\\tests\\rules\\index.test.js"
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "args": ["tests/**/*.test.js"]
     }
   ]
 }

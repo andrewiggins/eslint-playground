@@ -3,8 +3,15 @@
     "jsx": "react",
     "target": "es2020",
     "module": "es2020",
+    "moduleResolution": "node",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "library": ["library/index.d.ts"],
+      "library/*": ["library/*"]
+    },
+    "noEmit": true
   },
-  "include": ["file.tsx"]
+  "include": ["file.tsx", "**/*.ts", "**/*.tsx"]
 }
