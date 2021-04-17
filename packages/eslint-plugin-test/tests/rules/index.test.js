@@ -3,12 +3,12 @@ import { createRuleTester } from "./utils.js";
 
 const tester = createRuleTester();
 tester.run("testRule", testRule, {
-  valid: [{ code: "let a = 0;" }, { code: "const a = 0;" }],
+  valid: [{ code: "function f(): void {}" }],
   invalid: [
     {
-      code: "var a = 0;",
-      errors: [{ messageId: "noVar" }],
-      output: "let a = 0;",
+      code: "function f() {}",
+      errors: [{ messageId: "noReturnType" }],
+      // output: "let a = 0;",
     },
   ],
 });

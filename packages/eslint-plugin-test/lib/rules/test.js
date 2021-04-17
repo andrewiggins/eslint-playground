@@ -10,7 +10,7 @@ const testRule = {
       url: "",
     },
     messages: {
-      noVar: "Do not use `var` declarations",
+      noReturnType: "Function has no return type.",
     },
     // rule options schema
     // schema: []
@@ -35,18 +35,18 @@ const testRule = {
     // const tsService = context.parserServices;
 
     return {
-      VariableDeclaration(node) {
-        if (node.kind == "var") {
+      FunctionDeclaration(node) {
+        if (node.returnType == null) {
           context.report({
             node,
-            messageId: "noVar",
-            fix(fixer) {
-              const sourceCode = context.getSourceCode();
-              return fixer.replaceText(
-                node,
-                sourceCode.getText(node).replace("var", "let")
-              );
-            },
+            messageId: "noReturnType",
+            // fix(fixer) {
+            //   const sourceCode = context.getSourceCode();
+            //   return fixer.replaceText(
+            //     node,
+            //     sourceCode.getText(node).replace("var", "let")
+            //   );
+            // },
           });
         }
       },
