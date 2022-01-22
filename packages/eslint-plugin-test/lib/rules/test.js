@@ -74,6 +74,8 @@ const testRule = {
     return {
       JSXOpeningElement(node) {
         const tsInfo = getTSInfo(node.name);
+        // This works if type info is available! Just not sure what to do with
+        // it. Also it is much slower, so maybe not worth it.
         // console.log(tsInfo);
       },
       "Program:exit"() {
@@ -97,7 +99,12 @@ const testRule = {
         };
 
         // @ts-ignore Out-of-date types
-        for (const { node, path } of tracker.iterateEsmReferences(traceMap)) {
+        for (const ref of tracker.iterateEsmReferences(traceMap)) {
+          // Dang... it doesn't give us a list of references so we can expound
+          // and look at properties of references. It only determines that a
+          // reference was found
+          console.log(ref);
+
           // console.log(path.join("."));
           // context.report({
           //   node,

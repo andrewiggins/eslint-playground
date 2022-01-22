@@ -46,6 +46,32 @@ const noNamespaceImport = {
       }
     }
 
+    /** @param {import("@typescript-eslint/experimental-utils").TSESTree.JSXTagNameExpression} node */
+    function getTSInfo(node) {
+      if (
+        context.parserServices &&
+        context.parserServices.hasFullTypeInformation
+      ) {
+        const esTreeNodeToTSNodeMap =
+          context.parserServices.esTreeNodeToTSNodeMap;
+        const program = context.parserServices.program;
+        const typeChecker = program.getTypeChecker();
+        const tsNode = esTreeNodeToTSNodeMap.get(node);
+
+        // const tsType = typeChecker.getTypeAtLocation(node);
+        const symbol = typeChecker.getSymbolAtLocation(tsNode);
+        if (symbol) {
+          const symbolName = typeChecker.getFullyQualifiedName(symbol);
+          const symbolType = typeChecker.getTypeOfSymbolAtLocation(
+            symbol,
+            tsNode
+          );
+
+          return { symbol, symbolName, symbolType };
+        }
+      }
+    }
+
     return {
       Program(node) {
         importsFromLib.set(context.getSourceCode(), []);
@@ -61,6 +87,11 @@ const noNamespaceImport = {
         }
       },
       JSXOpeningElement(node) {
+        // This works if type info is available! Just not sure what to do with
+        // it. Also it is much slower, so maybe not worth it
+        const tsInfo = getTSInfo(node.name);
+        console.log("TSInfo:", tsInfo);
+
         const componentName = getJSXComponentName(node.name);
         if (!componentName) {
           // Not a component
@@ -80,7 +111,8 @@ const noNamespaceImport = {
         }
 
         if (libImports.includes(componentVar)) {
-          console.log(componentVar);
+          console.log("Node:", node);
+          console.log("Variable:", componentVar);
         }
       },
     };
