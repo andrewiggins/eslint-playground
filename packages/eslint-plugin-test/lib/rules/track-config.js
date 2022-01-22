@@ -1,6 +1,13 @@
-import { ASSIGNED, MISSING, READ } from "./tracking-utils";
+// These would live in some common module used by the tracker and configuration
 
-export default function getConfig() {
+const READ = Symbol();
+const MISSING = Symbol();
+const ASSIGNED = Symbol();
+
+// Exploration of what a possible config might look like to determine how to
+// track usage
+
+function getConfig() {
   return {
     library: {
       Dialog: {
